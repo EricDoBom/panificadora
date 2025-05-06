@@ -1,0 +1,67 @@
+body{
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    background-color: rgb(255, 224, 161);
+    margin: 20px;
+    padding: 0;
+    color: rgb(18, 2, 2);
+}
+h1{
+    text-align: center;
+    color: rgb(103, 23, 23);
+}
+form{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+
+}
+form input, form button{
+    padding: 10px;
+    font-size: 1em;
+}
+form button{
+    background-color: brown;
+    color: aliceblue;
+    border: none;
+    cursor: pointer;
+}
+form button:hover{
+    background-color: rgb(195, 54, 54);
+}
+#busca{
+    display: block;
+    margin: 0 auto 20px auto;
+    padding: 10px;
+    width: 60%;
+    font-size: 1em;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+thead{
+    background-color: aliceblue;
+}
+th, td{
+    padding: 10px;
+    border: 1px solid;
+    text-align: center;
+}
+
+button.acao{
+    padding: 5px 10px;
+    margin: 2px;
+    border: none;
+    cursor: pointer;
+    color: aliceblue;
+    border-radius: 4px;
+}
+button.adicionar{
+    background-color: greenyellow;
+}
+button.remover{
+    background-color: #f44336;
+}
