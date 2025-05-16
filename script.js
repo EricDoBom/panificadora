@@ -47,7 +47,7 @@ function atualizarTabela(){
 form.addEventListener("submit",function(event){
     event.preventDefault(); //Evita o recarregamento da página
 
-    const nome = document.getElementById("nome").value
+    const nome = document.getElementById("nome").value;
     const quantidade = parseInt(document.getElementById("quantidade").value);
     const unidade = document.getElementById("unidade").value;
     const categoria = document.getElementById("categoria").value;
@@ -58,7 +58,7 @@ form.addEventListener("submit",function(event){
         quantidade,
         unidade,
         categoria
-    }
+    };
 
     //Adiciona na Lista
     produtos.push(novoProduto);
@@ -90,7 +90,7 @@ function removerProduto(index){
     atualizarTabela();
 }
 //Atualiza a tabela ao digitar no campo de busca
-busca.addEventListener("unput", atualizarTabela);
+busca.addEventListener("input", atualizarTabela);
 
 //Primeira renderização
 atualizarTabela();
