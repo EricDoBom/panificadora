@@ -1,96 +1,106 @@
 // Função que busca dados do localStorage ou inicia uma lista vazia
 let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+let editandoIndex = null;
 
 //Elementos do DOM
 const form = document.getElementById("form-produto");
 const tabela = document.getElementById("tabela-produtos");
 const busca = document.getElementById("busca");
+const filtroCategoria = document.getElementById("filtro-categoria");
 
-
-
-// Função para salvar os dados do localStorage
 function salvarDados(){
     localStorage.setItem("produtos", JSON.stringify(produtos));
 }
-// Função para desenhar a tabela com os produtos
-function atualizarTabela(){
+function atualizarCategoria(){
+    filtroCategoria.innerHTML='<option value="">Todas as Categorias</option>';
+    const categoriasUnicas = [... new Set(produtos.map(p=> p.categoria))];
+    categoriasUnicas.forEach(cat =>{
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    filtroCategoria.appendChild(option);
+    });
+}
 
-    // limpar a tabela de atualização
+//Atualiza a tabela com produtos filtrados
+function atualizarTabela(){
     tabela.innerHTML = "";
 
-    // Filtro de busca
-    const filtro = busca.value.toLowerCase();
-    
-    // Percorre todos os produtos
-    produtos.forEach((produto, index) => {
-        if (produto.nome.toLowerCase().includes(filtro)){
+    const filtroTexto = busca.value.toLowerCase();
+    const categoriaSelecionada = filtroCategoria.value;
+
+    produtos.forEach((produto,index)=>{
+        const nomeOk = produto.nome.toLowerCase().includes(filtroTexto);
+        const categoriaOk = categoriaSelecionada === "" || produto.categoria === categoriaSelecionada;
+
+        if(nomeOk && categoriaOk){
             const tr = document.createElement("tr");
 
-            // Colunas da tabela
-            tr.innerHTML=`
+            tr.innerHTML = `
                 <td>${produto.nome}</td>
                 <td>${produto.quantidade}</td>
                 <td>${produto.unidade}</td>
                 <td>${produto.categoria}</td>
                 <td>
-                    <button class = "acao adicionar" onclick = "alterarQuantidade(${index},1)">+</button>
-                    <button class = "acao remover" onclick = "alterarQuantidade(${index},-1)">-</button>
-                    <button class = "acao remover" onclick = "removerProduto(${index})">Excluir</button>
+                    <button class="acao adicionar" onclick="alterarQuantidade(${index}, 1)">+</button>
+                    <button class="acao remover" onclick="alterarQuantidade(${index}, -1)">-</button>
+                    <button class="acao editar" onclick="editarProduto(${index})">Editar</button>
+                    <button class="acao remover" onclick="removerProduto(${index})">Remover</button>
+
+
+
                 </td>
             `;
-                    tabela.appendChild(tr);
+                tabela.appendChild(tr);
         }
-    });
-
+    })
 }
-//Adicionar um novo produto
+
+//Adicionar ou editar produto
 form.addEventListener("submit",function(event){
-    event.preventDefault(); //Evita o recarregamento da página
+    event.preventDefault();
 
     const nome = document.getElementById("nome").value;
-    const quantidade = parseInt(document.getElementById("quantidade").value);
+    const quantidade = parseInt(document.getElementById("quantidade").value)
     const unidade = document.getElementById("unidade").value;
     const categoria = document.getElementById("categoria").value;
 
-    //Cria um novo objeto de produto
-    const novoProduto = {
-        nome,
-        quantidade,
-        unidade,
-        categoria
-    };
+    const novoProduto = {nome, quantidade, unidade, categoria};
 
-    //Adiciona na Lista
-    produtos.push(novoProduto);
-
-    //Atualiza a tabela e salva
-    salvarDados();
-    atualizarTabela();
-
-    //Limpa o formulário
-    form.reset();
-});
-
-//Alterar a quantidade do produto
-function alterarQuantidade(index,valor){
-    produtos[index].quantidade +=valor;
-
-    //Evita quantidade negativa
-    if(produtos[index].quantidade < 0){
-        produtos[index].quantidade = 0;
+    if(editandoIndex === null){
+        produtos.push(novoProduto);
+    } else {
+        produtos[editandoIndex] = novoProduto;
+        editandoIndex = null;
     }
 
     salvarDados();
     atualizarTabela();
-}
-//Remove um produto da lista
-function removerProduto(index){
-    produtos.splice(index,1);
+    atualizarCategoria();
+    form.reset();
+});
+//Alterar quantidade
+function alterarQuantidade(index, valor){
+    produtos[index].quantidade += valor;
+    if(produtos[index].quantidade < 0){
+        produtos[index].quantidade = 0;
+    }
     salvarDados();
     atualizarTabela();
 }
-//Atualiza a tabela ao digitar no campo de busca
-busca.addEventListener("input", atualizarTabela);
-
-//Primeira renderização
-atualizarTabela();
+//Editar Produto
+function editarProduto(){
+    const produto = produtos[index];
+    document.getElementById("nome").value = produto.nome;
+    document.getElementById("quantidade").value = produto.quantidade;
+    document.getElementById("unidade").value = produto.unidade;
+    document.getElementById("categoria").value = produto.categoria;
+    editandoIndex = index;
+}
+//Remove produto
+function removerProduto(){
+    produtos.splice(index,1);
+    salvarDados();
+    atualizarCategoria();
+    atualizarTabela();
+}
